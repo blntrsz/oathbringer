@@ -19,7 +19,7 @@ install() {
 }
 
 clone_repo() {
-  rm -rf ~/oathbringer && git clone https://github.com/blntrsz/oathbringer.git
+  rm -rf ~/oathbringer && git clone https://github.com/blntrsz/oathbringer.git ~/oathbringer
 }
 
 ansible_run() {
