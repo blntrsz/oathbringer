@@ -7,6 +7,11 @@
         upgrade: yes
   tasks:
     - import_tasks: tasks/neovim.yaml
+    - name: Ensure tmux config dir
+      ansible.builtin.file:
+        path: ~/.config/tmux
+        state: directory
+        mode: "0755"
     - name: Copy dotfiles
       ansible.builtin.copy:
         src: "{{ item.src }}"
