@@ -2,3 +2,4 @@ software-properties-common
 git
 ansible
 tmux
+fzf
