@@ -1,14 +1,21 @@
-#! /bin/sh
+#! /bin/bash
 
 base_setup() {
   apt update -y &&
   apt upgrade -y
 }
 
+PACKAGES=(
+  software-properties-common
+  git
+  ansible
+  tmux
+  fzf
+)
+
 install() {
-  apt install -y "$(cat packages.txt)" &&
+  apt install -y "${PACKAGES[@]}" &&
   add-apt-repository --yes --update ppa:ansible/ansible &&
-  apt install -y $(cat packages.txt | tail -n +2)
 }
 
 clone_repo() {
