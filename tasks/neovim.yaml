@@ -43,5 +43,5 @@
     repo: "https://github.com/blntrsz/nvim"
     dest: "{{ lookup('env', 'HOME') }}/.config/nvim"
     update: true
-    version: master
+    version: main
   tags: neovim
