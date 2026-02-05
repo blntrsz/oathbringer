@@ -6,8 +6,8 @@ base_setup() {
 }
 
 install() {
-  sudo apt install -y "$(cat packages.txt | head -n 1)" &&
-  sudo add-apt-repsitory --yes --update ppa:ansible/ansible &&
+  apt install -y "$(cat packages.txt | head -n 1)" &&
+  add-apt-repsitory --yes --update ppa:ansible/ansible &&
   apt install -y $(cat packages.txt | tail -n +2)
 }
 
