@@ -10,3 +10,5 @@ bindkey -s ^F "~/.config/tmux/tmux-sessionizer\n"
 
 # Load aliasses
 [ -f "$HOME/.config/aliasrc" ] && source "$HOME/.config/aliasrc"
+
+export OPENCODE_EXPERIMENTAL_PLAN_MODE=1
