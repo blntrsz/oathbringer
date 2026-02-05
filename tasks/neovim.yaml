@@ -10,25 +10,30 @@
       - pkg-config
       - unzip
       - curl
+    state: present
   tags: neovim
-
-- name: Remove neovim
-  ansible.builtin.file:
-    path: ~/.config/neovim
-    state: absent
 
 - name: Clone Neovim
   ansible.builtin.git:
     repo: "https://github.com/neovim/neovim.git"
     dest: "{{ lookup('env', 'HOME') }}/.config/neovim"
+    update: true
+    version: master
+  register: neovim_repo
   tags: neovim
 
 - name: Build neovim
   become: true
-  shell: "cd {{ lookup('env', 'HOME') }}/.config/neovim && make -j 20"
+  ansible.builtin.command: make -j 20
+  args:
+    chdir: "{{ lookup('env', 'HOME') }}/.config/neovim"
+  when: neovim_repo.changed
   tags: neovim
 
 - name: Install neovim
   become: true
-  shell: "cd {{ lookup('env', 'HOME') }}/.config/neovim && make install"
+  ansible.builtin.command: make install
+  args:
+    chdir: "{{ lookup('env', 'HOME') }}/.config/neovim"
+  when: neovim_repo.changed
   tags: neovim
