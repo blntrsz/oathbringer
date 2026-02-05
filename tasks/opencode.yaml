@@ -1,6 +1,6 @@
-- name: Ensure systemd user directory
+- name: Ensure systemd system directory
   ansible.builtin.file:
-    path: ~/.config/systemd/user
+    path: /etc/systemd/system
     state: directory
     mode: "0755"
 
@@ -14,8 +14,8 @@
   ansible.builtin.shell: curl -fsSL https://opencode.ai/install | bash
   when: opencode_check.rc != 0
 
-- name: Install opencode systemd user unit
+- name: Install opencode systemd unit
   ansible.builtin.copy:
     src: systemd/opencode.service
-    dest: ~/.config/systemd/user/opencode.service
+    dest: /etc/systemd/system/opencode.service
     mode: "0644"
