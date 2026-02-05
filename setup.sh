@@ -15,7 +15,7 @@ PACKAGES=(
 
 install() {
   apt install -y "${PACKAGES[@]}" &&
-  add-apt-repository --yes --update ppa:ansible/ansible &&
+  add-apt-repository --yes --update ppa:ansible/ansible
 }
 
 clone_repo() {
