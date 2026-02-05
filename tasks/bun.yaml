@@ -1,0 +1,9 @@
+- name: Check bun availability
+  ansible.builtin.command: command -v bun
+  register: bun_check
+  changed_when: false
+  failed_when: false
+
+- name: Install bun
+  ansible.builtin.shell: curl -fsSL https://bun.sh/install | bash
+  when: bun_check.rc != 0
