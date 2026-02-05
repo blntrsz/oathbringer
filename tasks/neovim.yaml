@@ -37,3 +37,11 @@
     chdir: "{{ lookup('env', 'HOME') }}/.config/neovim"
   when: neovim_repo.changed
   tags: neovim
+
+- name: Clone nvim config
+  ansible.builtin.git:
+    repo: "https://github.com/blntrsz/nvim"
+    dest: "{{ lookup('env', 'HOME') }}/.config/nvim"
+    update: true
+    version: master
+  tags: neovim
