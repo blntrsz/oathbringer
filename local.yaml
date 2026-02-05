@@ -9,6 +9,7 @@
     - import_tasks: tasks/neovim.yaml
     - import_tasks: tasks/bun.yaml
     - import_tasks: tasks/opencode.yaml
+    - import_tasks: tasks/network.yaml
     - name: Ensure tmux config dir
       ansible.builtin.file:
         path: ~/.config/tmux

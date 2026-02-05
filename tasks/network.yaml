@@ -1,0 +1,26 @@
+- name: Install tailscale
+  ansible.builtin.shell: curl -fsSL https://tailscale.com/install.sh | sh
+
+- name: Initialize tailscale (interactive)
+  ansible.builtin.command: tailscale up
+
+- name: Install ufw
+  ansible.builtin.apt:
+    name: ufw
+    state: present
+    update_cache: true
+
+- name: Set ufw default deny incoming
+  ansible.builtin.command: ufw default deny incoming
+
+- name: Set ufw default allow outgoing
+  ansible.builtin.command: ufw default allow outgoing
+
+- name: Allow ssh in ufw
+  ansible.builtin.command: ufw allow ssh
+
+- name: Allow tailscale in ufw
+  ansible.builtin.command: ufw allow 41641/udp
+
+- name: Enable ufw
+  ansible.builtin.command: ufw --force enable

@@ -19,3 +19,6 @@
     src: systemd/opencode.service
     dest: /etc/systemd/system/opencode.service
     mode: "0644"
+
+- name: Start opencode service
+  ansible.builtin.command: systemctl start opencode
