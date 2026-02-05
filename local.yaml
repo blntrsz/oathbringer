@@ -1,0 +1,9 @@
+- hosts: localhost
+  pre_tasks:
+    - name: Update and Upgrade
+      become: true
+      ansible.builtin.package:
+        update_cache: yes
+        upgrade: yes
+  tasks:
+    - import_tasks: tasks/neovim.yaml
