@@ -6,9 +6,9 @@ base_setup() {
 }
 
 install() {
-  sudo apt install software-properties-common &&
-  sudo add-apt-repository --yes --update ppa:ansible/ansible &&
-  apt install -y git ansible
+  sudo apt install -y "$(cat packages.txt | head -n 1)" &&
+  sudo add-apt-repsitory --yes --update ppa:ansible/ansible &&
+  apt install -y $(cat packages.txt | tail -n +2)
 }
 
 clone_repo() {

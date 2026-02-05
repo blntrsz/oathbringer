@@ -1,0 +1,9 @@
+# git
+alias dot='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+alias lg="lazygit"
+alias gs="git status"
+alias ds="dot status"
+
+# vim
+alias v='nvim'
+alias vim='nvim'

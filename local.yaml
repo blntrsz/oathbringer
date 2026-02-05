@@ -7,3 +7,20 @@
         upgrade: yes
   tasks:
     - import_tasks: tasks/neovim.yaml
+    - name: Copy dotfiles
+      ansible.builtin.copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        mode: "{{ item.mode | default('0644') }}"
+      loop:
+        - src: home/.zshrc
+          dest: ~/.zshrc
+        - src: home/.tmux.conf
+          dest: ~/.tmux.conf
+        - src: home/.config/tmux/tmux-sessionizer
+          dest: ~/.config/tmux/tmux-sessionizer
+          mode: "0755"
+        - src: home/.config/aliasrc
+          dest: ~/.config/aliasrc
+      tags: zsh
+    - import_tasks: tasks/zsh.yaml
