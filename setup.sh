@@ -3,7 +3,12 @@
 set -euo pipefail
 
 if [[ $EUID -ne 0 ]]; then
-  echo "Run this setup as root (for example, curl ... | sudo bash)." >&2
+  echo "Run this setup as root (see README.md)." >&2
+  exit 1
+fi
+
+if [[ ! -t 0 ]]; then
+  echo "Run this setup from an interactive terminal; do not pipe it into Bash." >&2
   exit 1
 fi
 
@@ -39,7 +44,7 @@ clone_repo() {
 
 ansible_run() {
   ansible-playbook "$INSTALL_DIR/local.yaml" \
-    --extra-vars "bootstrap_authorized_keys_path=$BOOTSTRAP_KEYS" </dev/tty
+    --extra-vars "bootstrap_authorized_keys_path=$BOOTSTRAP_KEYS"
 }
 
 base_setup &&
