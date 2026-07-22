@@ -22,3 +22,5 @@ mosh dev@server
 ```
 
 `admin` has passwordless sudo because password authentication is disabled. `dev` is not a sudoer. Mosh also requires UDP ports `60000:61000` to be allowed by the host or cloud firewall.
+
+Docker Engine, Buildx, and Docker Compose are installed from Docker's official Ubuntu repository. The `dev` account belongs to the `docker` group, so reconnect after provisioning before running `docker` or `docker compose` without sudo.
