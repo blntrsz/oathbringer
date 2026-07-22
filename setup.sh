@@ -39,7 +39,7 @@ clone_repo() {
 
 ansible_run() {
   ansible-playbook "$INSTALL_DIR/local.yaml" \
-    --extra-vars "bootstrap_authorized_keys_path=$BOOTSTRAP_KEYS"
+    --extra-vars "bootstrap_authorized_keys_path=$BOOTSTRAP_KEYS" </dev/tty
 }
 
 base_setup &&
