@@ -8,7 +8,17 @@
     dev_user: dev
     dev_home: /home/dev
     bootstrap_authorized_keys_path: /root/.ssh/authorized_keys
+  vars_prompt:
+    - name: opencode_server_password
+      prompt: OpenCode server password
+      private: true
+      confirm: true
   pre_tasks:
+    - name: Require OpenCode server password
+      ansible.builtin.assert:
+        that:
+          - opencode_server_password | length > 0
+        fail_msg: OpenCode server password must not be empty.
     - name: Update and upgrade system packages
       ansible.builtin.apt:
         update_cache: true
@@ -26,6 +36,8 @@
       ansible.builtin.import_tasks: tasks/bun.yaml
     - name: Install OpenCode
       ansible.builtin.import_tasks: tasks/opencode.yaml
+    - name: Configure OpenCode service with PM2
+      ansible.builtin.import_tasks: tasks/pm2.yaml
     - name: Install Herdr
       ansible.builtin.import_tasks: tasks/herdr.yaml
     - name: Install Moshi

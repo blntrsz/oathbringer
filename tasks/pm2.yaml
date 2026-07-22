@@ -1,0 +1,116 @@
+- name: Install PM2 dependencies
+  ansible.builtin.package:
+    name:
+      - nodejs
+      - npm
+    state: present
+
+- name: Check PM2 availability
+  ansible.builtin.stat:
+    path: "{{ dev_home }}/.local/bin/pm2"
+  register: pm2_binary
+
+- name: Install PM2
+  become: true
+  become_user: "{{ dev_user }}"
+  ansible.builtin.command:
+    argv:
+      - /usr/bin/npm
+      - install
+      - --global
+      - --prefix
+      - "{{ dev_home }}/.local"
+      - pm2
+  environment:
+    HOME: "{{ dev_home }}"
+  when: not pm2_binary.stat.exists
+  changed_when: true
+
+- name: Check PM2 systemd service
+  ansible.builtin.stat:
+    path: "/etc/systemd/system/pm2-{{ dev_user }}.service"
+  register: pm2_systemd_service
+
+- name: Register PM2 systemd service
+  ansible.builtin.command:
+    argv:
+      - "{{ dev_home }}/.local/bin/pm2"
+      - startup
+      - systemd
+      - -u
+      - "{{ dev_user }}"
+      - --hp
+      - "{{ dev_home }}"
+  environment:
+    PATH: "{{ dev_home }}/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+  when: not pm2_systemd_service.stat.exists
+  changed_when: true
+
+- name: Check OpenCode PM2 process
+  become: true
+  become_user: "{{ dev_user }}"
+  ansible.builtin.command:
+    argv:
+      - "{{ dev_home }}/.local/bin/pm2"
+      - describe
+      - opencode
+  environment:
+    HOME: "{{ dev_home }}"
+  register: opencode_pm2_process
+  failed_when: false
+  changed_when: false
+
+- name: Start OpenCode with PM2
+  become: true
+  become_user: "{{ dev_user }}"
+  ansible.builtin.command:
+    argv:
+      - "{{ dev_home }}/.local/bin/pm2"
+      - start
+      - "{{ dev_home }}/.opencode/bin/opencode"
+      - --name
+      - opencode
+      - --cwd
+      - "{{ dev_home }}"
+      - --interpreter
+      - none
+      - --
+      - serve
+      - --hostname
+      - 0.0.0.0
+  environment:
+    HOME: "{{ dev_home }}"
+    OPENCODE_SERVER_PASSWORD: "{{ opencode_server_password }}"
+  when: opencode_pm2_process.rc != 0
+  register: opencode_pm2_started
+  changed_when: true
+  no_log: true
+
+- name: Update running OpenCode password
+  become: true
+  become_user: "{{ dev_user }}"
+  ansible.builtin.command:
+    argv:
+      - "{{ dev_home }}/.local/bin/pm2"
+      - restart
+      - opencode
+      - --update-env
+  environment:
+    HOME: "{{ dev_home }}"
+    OPENCODE_SERVER_PASSWORD: "{{ opencode_server_password }}"
+  when: opencode_pm2_process.rc == 0
+  register: opencode_pm2_restarted
+  changed_when: true
+  no_log: true
+
+- name: Save PM2 process list
+  become: true
+  become_user: "{{ dev_user }}"
+  ansible.builtin.command:
+    argv:
+      - "{{ dev_home }}/.local/bin/pm2"
+      - save
+  environment:
+    HOME: "{{ dev_home }}"
+  when: (opencode_pm2_started.changed | default(false)) or (opencode_pm2_restarted.changed | default(false))
+  changed_when: true
