@@ -1,0 +1,23 @@
+- name: Install fnm dependencies
+  ansible.builtin.package:
+    name:
+      - curl
+      - unzip
+    state: present
+
+- name: Check fnm availability
+  ansible.builtin.stat:
+    path: "{{ dev_home }}/.local/share/fnm/fnm"
+  register: fnm_binary
+
+- name: Install fnm # noqa command-instead-of-module
+  become: true
+  become_user: "{{ dev_user }}"
+  ansible.builtin.shell:
+    cmd: set -o pipefail && curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell
+    executable: /bin/bash
+  environment:
+    HOME: "{{ dev_home }}"
+    SHELL: /usr/bin/zsh
+  when: not fnm_binary.stat.exists
+  changed_when: true

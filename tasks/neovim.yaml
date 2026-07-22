@@ -1,5 +1,4 @@
 - name: Install neovim build dependencies
-  become: true
   ansible.builtin.package:
     name:
       - ninja-build
@@ -14,35 +13,45 @@
   tags: neovim
 
 - name: Clone Neovim
+  become: true
+  become_user: "{{ dev_user }}"
   ansible.builtin.git:
     repo: "https://github.com/neovim/neovim.git"
-    dest: "{{ lookup('env', 'HOME') }}/.config/neovim"
+    dest: "{{ dev_home }}/.config/neovim"
     update: true
     version: master
+  environment:
+    HOME: "{{ dev_home }}"
   register: neovim_repo
   tags: neovim
 
-- name: Build neovim
+- name: Build Neovim # noqa no-handler
   become: true
+  become_user: "{{ dev_user }}"
   ansible.builtin.command: make -j 20
   args:
-    chdir: "{{ lookup('env', 'HOME') }}/.config/neovim"
+    chdir: "{{ dev_home }}/.config/neovim"
   when: neovim_repo.changed
+  changed_when: true
   tags: neovim
 
-- name: Install neovim
-  become: true
+- name: Install Neovim binary # noqa no-handler
   ansible.builtin.command: make install
   args:
-    chdir: "{{ lookup('env', 'HOME') }}/.config/neovim"
+    chdir: "{{ dev_home }}/.config/neovim"
   when: neovim_repo.changed
+  changed_when: true
   tags: neovim
 
 - name: Clone nvim config
+  become: true
+  become_user: "{{ dev_user }}"
   ansible.builtin.git:
     repo: "https://github.com/blntrsz/nvim"
-    dest: "{{ lookup('env', 'HOME') }}/.config/nvim"
+    dest: "{{ dev_home }}/.config/nvim"
     update: true
     force: true
     version: main
+  environment:
+    HOME: "{{ dev_home }}"
   tags: neovim

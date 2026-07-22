@@ -1,33 +1,35 @@
-- hosts: localhost
+- name: Provision OathBringer server
+  hosts: localhost
+  connection: local
+  become: true
+  vars:
+    admin_user: admin
+    admin_home: /home/admin
+    dev_user: dev
+    dev_home: /home/dev
+    bootstrap_authorized_keys_path: /root/.ssh/authorized_keys
   pre_tasks:
-    - name: Update and Upgrade
-      become: true
-      ansible.builtin.package:
-        update_cache: yes
-        upgrade: yes
+    - name: Update and upgrade system packages
+      ansible.builtin.apt:
+        update_cache: true
+        upgrade: dist
   tasks:
-    - import_tasks: tasks/neovim.yaml
-    - import_tasks: tasks/bun.yaml
-    - import_tasks: tasks/opencode.yaml
-    - name: Ensure tmux config dir
-      ansible.builtin.file:
-        path: ~/.config/tmux
-        state: directory
-        mode: "0755"
-    - name: Copy dotfiles
-      ansible.builtin.copy:
-        src: "{{ item.src }}"
-        dest: "{{ item.dest }}"
-        mode: "{{ item.mode | default('0644') }}"
-      loop:
-        - src: home/.zshrc
-          dest: ~/.zshrc
-        - src: home/.tmux.conf
-          dest: ~/.tmux.conf
-        - src: home/.config/tmux/tmux-sessionizer
-          dest: ~/.config/tmux/tmux-sessionizer
-          mode: "0755"
-        - src: home/.config/aliasrc
-          dest: ~/.config/aliasrc
-      tags: zsh
-    - import_tasks: tasks/zsh.yaml
+    - name: Configure accounts and remote access
+      ansible.builtin.import_tasks: tasks/accounts.yaml
+    - name: Install Neovim
+      ansible.builtin.import_tasks: tasks/neovim.yaml
+    - name: Install Bun
+      ansible.builtin.import_tasks: tasks/bun.yaml
+    - name: Install OpenCode
+      ansible.builtin.import_tasks: tasks/opencode.yaml
+    - name: Install Herdr
+      ansible.builtin.import_tasks: tasks/herdr.yaml
+    - name: Install fnm
+      ansible.builtin.import_tasks: tasks/fnm.yaml
+    - name: Configure Zsh
+      ansible.builtin.import_tasks: tasks/zsh.yaml
+  handlers:
+    - name: Reload SSH
+      ansible.builtin.service:
+        name: ssh
+        state: reloaded

@@ -1,5 +1,7 @@
 software-properties-common
 git
 ansible
-tmux
 fzf
+mosh
+sudo
+zsh

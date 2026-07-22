@@ -1,0 +1,17 @@
+- name: Check Herdr availability
+  ansible.builtin.stat:
+    path: "{{ dev_home }}/.local/bin/herdr"
+  register: herdr_binary
+  tags: herdr
+
+- name: Install Herdr # noqa command-instead-of-module
+  become: true
+  become_user: "{{ dev_user }}"
+  ansible.builtin.shell:
+    cmd: set -o pipefail && curl -fsSL https://herdr.dev/install.sh | sh
+    executable: /bin/bash
+  environment:
+    HOME: "{{ dev_home }}"
+  when: not herdr_binary.stat.exists
+  changed_when: true
+  tags: herdr

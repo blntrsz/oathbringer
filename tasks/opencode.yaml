@@ -1,24 +1,15 @@
-- name: Ensure systemd system directory
-  ansible.builtin.file:
-    path: /etc/systemd/system
-    state: directory
-    mode: "0755"
+- name: Check OpenCode availability
+  ansible.builtin.stat:
+    path: "{{ dev_home }}/.opencode/bin/opencode"
+  register: opencode_binary
 
-- name: Check opencode availability
-  ansible.builtin.command: command -v opencode
-  register: opencode_check
-  changed_when: false
-  failed_when: false
-
-- name: Install opencode
-  ansible.builtin.shell: curl -fsSL https://opencode.ai/install | bash
-  when: opencode_check.rc != 0
-
-- name: Install opencode systemd unit
-  ansible.builtin.copy:
-    src: systemd/opencode.service
-    dest: /etc/systemd/system/opencode.service
-    mode: "0644"
-
-- name: Start opencode service
-  ansible.builtin.command: systemctl start opencode
+- name: Install OpenCode # noqa command-instead-of-module
+  become: true
+  become_user: "{{ dev_user }}"
+  ansible.builtin.shell:
+    cmd: set -o pipefail && curl -fsSL https://opencode.ai/install | bash
+    executable: /bin/bash
+  environment:
+    HOME: "{{ dev_home }}"
+  when: not opencode_binary.stat.exists
+  changed_when: true
