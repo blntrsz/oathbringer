@@ -6,7 +6,7 @@ The playbook provisions this account model:
 | --- | --- | ---: | --- | ---: |
 | `root` | Emergency and system ownership | - | Disabled | No |
 | `admin` | OS updates, Ansible, and recovery | Yes | SSH | No |
-| `dev` | Mosh, Herdr, GitHub, and coding | No | SSH and Mosh | Yes |
+| `dev` | Mosh, Moshi, Herdr, GitHub, and coding | No | SSH and Mosh | Yes |
 
 Run setup from an existing SSH account with a populated `authorized_keys` file. Its keys are copied to both `admin` and `dev` before root SSH is disabled.
 

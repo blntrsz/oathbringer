@@ -1,0 +1,17 @@
+- name: Check Moshi availability
+  ansible.builtin.stat:
+    path: "{{ dev_home }}/.local/bin/moshi-hook"
+  register: moshi_binary
+  tags: moshi
+
+- name: Install Moshi # noqa command-instead-of-module
+  become: true
+  become_user: "{{ dev_user }}"
+  ansible.builtin.shell:
+    cmd: set -o pipefail && curl -fsSL https://getmoshi.app/install.sh | sh
+    executable: /bin/bash
+  environment:
+    HOME: "{{ dev_home }}"
+  when: not moshi_binary.stat.exists
+  changed_when: true
+  tags: moshi

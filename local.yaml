@@ -26,6 +26,8 @@
       ansible.builtin.import_tasks: tasks/opencode.yaml
     - name: Install Herdr
       ansible.builtin.import_tasks: tasks/herdr.yaml
+    - name: Install Moshi
+      ansible.builtin.import_tasks: tasks/moshi.yaml
     - name: Install fnm
       ansible.builtin.import_tasks: tasks/fnm.yaml
     - name: Configure Zsh
