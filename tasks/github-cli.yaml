@@ -1,0 +1,43 @@
+- name: Install GitHub CLI repository dependencies
+  ansible.builtin.apt:
+    name:
+      - ca-certificates
+      - python3-debian
+    state: present
+  tags: github-cli
+
+- name: Create APT keyring directory for GitHub CLI
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  tags: github-cli
+
+- name: Install GitHub CLI repository signing key
+  ansible.builtin.get_url:
+    url: https://cli.github.com/packages/githubcli-archive-keyring.gpg
+    dest: /etc/apt/keyrings/githubcli-archive-keyring.gpg
+    owner: root
+    group: root
+    mode: "0644"
+  tags: github-cli
+
+- name: Add GitHub CLI repository
+  ansible.builtin.deb822_repository:
+    name: github-cli
+    types: deb
+    uris: https://cli.github.com/packages
+    suites: stable
+    components: main
+    signed_by: /etc/apt/keyrings/githubcli-archive-keyring.gpg
+    state: present
+  tags: github-cli
+
+- name: Install GitHub CLI
+  ansible.builtin.apt:
+    name: gh
+    state: present
+    update_cache: true
+  tags: github-cli
